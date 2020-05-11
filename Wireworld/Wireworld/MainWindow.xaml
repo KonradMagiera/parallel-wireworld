@@ -5,8 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wireworld"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="MainWindow" Height="931" Width="808">
+    <Grid Margin="0,0,2,106">
+        <Canvas x:Name="canvasBoard" HorizontalAlignment="Left" Height="800" VerticalAlignment="Top" Width="800" Margin="0,0,-2,-6" MouseDown="CanvasUserClick" Background="White"/>
+
+        <Canvas Margin="0,800,-2,-106"  Width="800">
+            <Button Content="Run" Canvas.Left="657" Canvas.Top="26" Width="75"/>
+            <Label Content="Number of threads" Canvas.Left="10" Canvas.Top="10"/>
+            <TextBox Height="23" Canvas.Left="126" TextWrapping="Wrap" Text="TextBox" Canvas.Top="14" Width="120"/>
+            <Label Content="Number of gens" Canvas.Left="10" Canvas.Top="37"/>
+            <TextBox Height="23" Canvas.Left="126" TextWrapping="Wrap" Text="TextBox" Canvas.Top="41" Width="120"/>
+            <Label Content="Size of boards (x*x)" Canvas.Left="264" Canvas.Top="14"/>
+            <TextBox Height="23" Canvas.Left="380" TextWrapping="Wrap" Text="TextBox" Canvas.Top="18" Width="120"/>
+        </Canvas>
     </Grid>
 </Window>
