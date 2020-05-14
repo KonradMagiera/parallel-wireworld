@@ -9,7 +9,7 @@
     <Grid Margin="0,0,2,106">
         <Canvas x:Name="canvasBoard" HorizontalAlignment="Left" Height="800" VerticalAlignment="Top" Width="800" Margin="0,0,-2,-6" MouseDown="CanvasUserClick" Background="White"/>
 
-        <Canvas Margin="0,800,-2,-106"  Width="800">
+        <Canvas Margin="0,800,-2,-106"  Width="800" Height="100">
             <Button Content="Run" Canvas.Left="669" Canvas.Top="20" Width="75" Click="RunSimulation"/>
             <Label Content="Number of threads" Canvas.Left="10" Canvas.Top="10"/>
             <TextBox x:Name="numberOfThreads" Height="23" Canvas.Left="126" TextWrapping="Wrap" Text="1" Canvas.Top="14" Width="120"/>

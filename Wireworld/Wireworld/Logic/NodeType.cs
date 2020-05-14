@@ -1,6 +1,6 @@
-﻿namespace Wireworld
+﻿namespace Wireworld.Logic
 {
-    enum NodeType : int
+    enum NodeType : byte
     {
         Empty = 0,
         Conductor = 1,
