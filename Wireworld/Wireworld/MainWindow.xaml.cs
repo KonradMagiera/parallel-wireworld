@@ -14,7 +14,7 @@ namespace Wireworld
     public partial class MainWindow : Window
     {
         private readonly int BOARD_MARGIN = 8;
-        private int INITIAL_SIZE = 20;
+        private int INITIAL_SIZE = 5;
         private readonly Automata automata;
 
         public MainWindow()
@@ -35,8 +35,8 @@ namespace Wireworld
         {
             canvasBoard.Children.Clear();
 
-            for (int i = 0; i < automata.Nodes.GetLength(0); i++)
-                for (int j = 0; j < automata.Nodes.GetLength(0); j++)
+            for (int i = 0; i < automata.Size; i++)
+                for (int j = 0; j < automata.Size; j++)
                 {
                     Draw(i, j);
                 }
@@ -57,10 +57,10 @@ namespace Wireworld
                 StrokeThickness = 0.3
             };
 
-            if (automata.Nodes[x, y] == NodeType.Empty) r.Fill = Brushes.Black;
-            else if (automata.Nodes[x, y] == NodeType.Conductor) r.Fill = Brushes.Yellow;
-            else if (automata.Nodes[x, y] == NodeType.Head) r.Fill = Brushes.Blue;
-            else if (automata.Nodes[x, y] == NodeType.Tail) r.Fill = Brushes.Red;
+            if (automata[x, y] == NodeType.Empty) r.Fill = Brushes.Black;
+            else if (automata[x, y] == NodeType.Conductor) r.Fill = Brushes.Yellow;
+            else if (automata[x, y] == NodeType.Head) r.Fill = Brushes.Blue;
+            else if (automata[x, y] == NodeType.Tail) r.Fill = Brushes.Red;
 
             Canvas.SetLeft(r, NodeSize * x);
             Canvas.SetTop(r, NodeSize * y);
@@ -75,10 +75,11 @@ namespace Wireworld
 
             if (x >= 0 && y >= 0 && x < automata.Nodes.GetLength(0) && y < automata.Nodes.GetLength(0))
             {
-                if (automata.Nodes[x, y] == NodeType.Empty) automata.Nodes[x, y] = NodeType.Conductor;
-                else if (automata.Nodes[x, y] == NodeType.Conductor) automata.Nodes[x, y] = NodeType.Head;
-                else if (automata.Nodes[x, y] == NodeType.Head) automata.Nodes[x, y] = NodeType.Tail;
-                else if (automata.Nodes[x, y] == NodeType.Tail) automata.Nodes[x, y] = NodeType.Empty;
+                if (automata[x, y] == NodeType.Empty) automata[x, y] = NodeType.Conductor;
+                else if (automata[x, y] == NodeType.Conductor) automata[x, y] = NodeType.Head;
+                else if (automata[x, y] == NodeType.Head) automata[x, y] = NodeType.Tail;
+                else if (automata[x, y] == NodeType.Tail) automata[x, y] = NodeType.Empty;
+                Console.WriteLine("Editing idx: " + (x * automata.Size + y));
                 Draw(x, y);
             }
         }
@@ -87,15 +88,17 @@ namespace Wireworld
         {
             try
             {
-                automata.NumberOfGenerations = int.Parse(numberOfGenerations.Text);
+                //automata.NumberOfGenerations = int.Parse(numberOfGenerations.Text);
                 automata.NumberOfThreads = int.Parse(numberOfThreads.Text);
+                automata.NextGeneration();
+                Draw();
             }
             catch
             {
                 Console.WriteLine("Given settings are incorrect! Only numbers are accepted.");
             }
 
-            Console.WriteLine($"NumberOfGenerations: {automata.NumberOfGenerations}, NumberOfThreads {automata.NumberOfThreads}");
+            //Console.WriteLine($"NumberOfGenerations: {automata.NumberOfGenerations}, NumberOfThreads {automata.NumberOfThreads}");
         }
 
         private void ChangeBoardSize(object sender, RoutedEventArgs e)
@@ -106,7 +109,7 @@ namespace Wireworld
 
                 if (tmpSize != automata.Nodes.GetLength(0))
                 {
-                    automata.Nodes = new NodeType[tmpSize, tmpSize];
+                    automata.Nodes = new NodeType[tmpSize];
                     NodeSize = (canvasBoard.Height - BOARD_MARGIN) / automata.Nodes.GetLength(0);
 
                     Draw();
