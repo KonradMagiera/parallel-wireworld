@@ -31,14 +31,9 @@ namespace Wireworld.Logic
         /// <summary>
         /// Single generation with parallel
         /// </summary>
-        // a blank square always stays blank
-        // an electron head always becomes an electron tail
-        // an electron tail always becomes copper
-        // copper stays as copper unless it has just one or two neighbours that are electron heads,
-        //      in which case it becomes an electron head
         public void NextGeneration()
         {
-            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = 8 };
+            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = NumberOfThreads };
             Parallel.ForEach(Nodes, options,
             (node, state, index) =>
             {
@@ -83,7 +78,6 @@ namespace Wireworld.Logic
             int row = (idx - col) / Size;
 
             for (int col_i = -1; col_i < 2; col_i++)
-            {
                 for (int row_i = -1; row_i < 2; row_i++)
                 {
                     int current_idx = CalculateIndex(row + row_i, col + col_i);
@@ -92,7 +86,6 @@ namespace Wireworld.Logic
                         heads++;
                     }
                 }
-            }
 
             return heads;
         }
@@ -100,9 +93,7 @@ namespace Wireworld.Logic
         private int CalculateIndex(int x, int y)
         {
             if (Borders && (x >= Size || y >= Size || x < 0 || y < 0))
-            {
                 return -1;
-            }
 
             // Wrap x
             if (x >= Size)
