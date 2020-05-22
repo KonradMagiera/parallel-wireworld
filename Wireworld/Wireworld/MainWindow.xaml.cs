@@ -5,8 +5,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Threading.Tasks;
-using Wireworld.Logic;
 using System.Threading;
+using Microsoft.Win32;
+
+using Wireworld.Logic;
+using Wireworld.FileHandling;
 
 namespace Wireworld
 {
@@ -28,7 +31,7 @@ namespace Wireworld
             automata = new Automata(INITIAL_SIZE);
 
             Draw();
-            initalRun = false;
+
         }
 
         private double NodeSize { get; set; }
@@ -42,14 +45,14 @@ namespace Wireworld
             if (initalRun)
                 canvasBoard.Children.Clear();
 
-            if (automata.Size > LIMIT_DRAWING) return;
-
             for (int i = 0; i < automata.Size; i++)
                 for (int j = 0; j < automata.Size; j++)
                 {
                     if (!initalRun && automata[j, i] == NodeType.Empty) continue;
                     Draw(i, j);
                 }
+
+            initalRun = false;
         }
 
         /// <summary>
@@ -59,8 +62,6 @@ namespace Wireworld
         /// <param name="y">Position Y of Rectangle</param>
         private void Draw(int x, int y)
         {
-            if (automata.Size > LIMIT_DRAWING) return;
-
             Rectangle r = new Rectangle
             {
                 Height = NodeSize,
@@ -116,19 +117,49 @@ namespace Wireworld
             automata.Borders = (bool)bordersMode.IsChecked;
             Console.WriteLine($"Borders: {bordersMode.IsChecked}");
 
-            Task.Run(() =>
+
+
+            //Task task = null;
+            if (automata.Size > LIMIT_DRAWING)
             {
-                for (int i = 0; i < NumberOfGenerations; i++)
+                Task task = Task.Run(() =>
                 {
+                    for (int i = 0; i < NumberOfGenerations; i++)
+                    {
+                        Dispatcher.Invoke(new Action(() =>
+                        {
+                            automata.NextGeneration();
+                        }));
+                        //Thread.Sleep(75);
+                    }
+                });
+
+                Task.Run(() =>
+                {
+                    task.Wait();
                     Dispatcher.Invoke(new Action(() =>
                     {
-                        automata.NextGeneration();
                         Draw();
+                        Console.WriteLine("Finished");
                     }));
-                    Thread.Sleep(75);
-                }
-            });
-
+                });
+            }
+            else
+            {
+                Task.Run(() =>
+                {
+                    for (int i = 0; i < NumberOfGenerations; i++)
+                    {
+                        Dispatcher.Invoke(new Action(() =>
+                        {
+                            automata.NextGeneration();
+                            Draw();
+                        }));
+                        Thread.Sleep(75);
+                    }
+                    Console.WriteLine("Finished");
+                });
+            } 
         }
 
         private void ChangeBoardSize(object sender, RoutedEventArgs e)
@@ -150,6 +181,29 @@ namespace Wireworld
             catch
             {
                 Console.WriteLine("Given size is incorrect! Only numbers are accepted.");
+            }
+        }
+
+        private void SetGifPath(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OpenFile(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Tee");
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.FileName = "generation";
+            dialog.DefaultExt = ".png";
+            dialog.Filter = "Image Files | *.png";
+            dialog.InitialDirectory = @"C:\";
+            dialog.Title = "Please select an image with generation.";
+
+            if (dialog.ShowDialog() == true)
+            {
+                FileHandler.ReadFile(dialog.FileName);
+
+                Draw();
             }
         }
     }
