@@ -15,7 +15,7 @@ namespace Wireworld.FileHandling
 
         public static void SaveGif()
         {
-            // maybe add Image to existing Gif; we need to check the library
+           
         }
 
     }
