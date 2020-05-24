@@ -1,21 +1,24 @@
 ﻿using System;
 using Wireworld.Logic;
+using Wireworld.FileHandling;
+using System.Diagnostics;
 
 namespace Wireworld
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            if(args.Length != 5)
+            if (args.Length != 5)
             {
                 Console.WriteLine("Try ./Wireworld <file.png> <output.gif> <number of generations> <number of threads> <true/false - turn on borders>");
                 return;
             }
 
-            ulong numberOfGenerations = 1;
-            byte numberOfThreads = 1;
-            bool borders = true;
+            ulong numberOfGenerations;
+            byte numberOfThreads;
+            bool borders;
 
             // Read numbers
             try
@@ -33,14 +36,37 @@ namespace Wireworld
             }
 
             // Read png
-            int size = 5; // temporary
+            NodeType[] nodes;
+
+            try
+            {
+                nodes = FileHandler.ReadFile(args[0]);
+            }
+            catch
+            {
+                Console.WriteLine("Given generation is invalid!");
+                return;
+            }
 
             // Create and run Automata
+            int size = (int)Math.Sqrt(nodes.Length);
             Automata automata = new Automata(size)
             {
-                NumberOfThreads = numberOfThreads
+                NumberOfThreads = numberOfThreads,
+                Borders = borders,
+                Nodes = nodes
             };
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            for(ulong i = 0; i < numberOfGenerations; i++)
+                automata.NextGeneration();
+
+            stopwatch.Stop();
+            TimeSpan ts = stopwatch.Elapsed;
+
+            Console.WriteLine("Time: {0:00}:{1:00}:{2:00}.{3}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
         }
     }
 }

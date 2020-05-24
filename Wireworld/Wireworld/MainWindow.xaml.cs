@@ -201,7 +201,7 @@ namespace Wireworld
 
             if (dialog.ShowDialog() == true)
             {
-                FileHandler.ReadFile(dialog.FileName);
+                //FileHandler.ReadFile(dialog.FileName);
 
                 Draw();
             }

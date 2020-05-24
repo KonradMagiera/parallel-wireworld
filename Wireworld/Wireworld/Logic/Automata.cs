@@ -12,7 +12,6 @@ namespace Wireworld.Logic
             this.Size = size;
             Nodes = new NodeType[size * size];
             SupportNodes = new NodeType[size * size];
-            Console.WriteLine("Def supp:" + SupportNodes[0]);
             NumberOfThreads = 1;
         }
 
