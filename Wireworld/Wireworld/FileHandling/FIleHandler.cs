@@ -48,29 +48,29 @@ namespace Wireworld.FileHandling
 
         public static void SaveImage(Automata automata, string filename)
         {
-            Bitmap generation = new Bitmap(automata.Size, automata.Size);
+            Bitmap generation = new Bitmap(automata.Width, automata.Height);
 
-            Color EMPTY = Color.FromArgb(0, 0, 0);
+             Color EMPTY = Color.FromArgb(0, 0, 0);
             Color CONDUCTOR = Color.FromArgb(255, 255, 0);
             Color HEAD = Color.FromArgb(0, 0, 255);
             Color TAIL = Color.FromArgb(255, 0, 0);
 
-            for (int y = 0; y < automata.Size; y++)
-                for (int x = 0; x < automata.Size; x++)
+            for (int y = 0; y < automata.Height; y++)
+                for (int x = 0; x < automata.Width; x++)
                 {
                     switch (automata[x, y])
                     {
                         case NodeType.Conductor:
-                            generation.SetPixel(y, x, CONDUCTOR);
+                            generation.SetPixel(x, y, CONDUCTOR);
                             break;
                         case NodeType.Head:
-                            generation.SetPixel(y, x, HEAD);
+                            generation.SetPixel(x, y, HEAD);
                             break;
                         case NodeType.Tail:
-                            generation.SetPixel(y, x, TAIL);
+                            generation.SetPixel(x, y, TAIL);
                             break;
                         default:
-                            generation.SetPixel(y, x, EMPTY);
+                            generation.SetPixel(x, y, EMPTY);
                             break;
                     }
                 }

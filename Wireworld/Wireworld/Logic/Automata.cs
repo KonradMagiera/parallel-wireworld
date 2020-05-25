@@ -7,24 +7,26 @@ namespace Wireworld.Logic
 
     class Automata
     {
-        public Automata(int size)
+        public Automata(int width, int height)
         {
-            this.Size = size;
-            Nodes = new NodeType[size * size];
-            SupportNodes = new NodeType[size * size];
+            this.Width = width;
+            this.Height = height;
+            Nodes = new NodeType[width * height];
+            SupportNodes = new NodeType[width * height];
             NumberOfThreads = 1;
         }
 
         public NodeType[] Nodes { get; set; }
         public NodeType[] SupportNodes { get; set; }
         public int NumberOfThreads { get; set; }
-        public int Size { get; set; }
+        public int Height { get; set; }
+        public int Width { get; set; }
         public bool Borders { get; set; }
 
-        public NodeType this[int key1, int key2]
+        public NodeType this[int x, int y]
         {
-            get => Nodes[key1 * Size + key2];
-            set => Nodes[key1 * Size + key2] = value;
+            get => Nodes[y * Width + x];
+            set => Nodes[y * Width + x] = value;
         }
 
         /// <summary>
@@ -72,14 +74,15 @@ namespace Wireworld.Logic
         {
             int heads = 0;
 
-            // row * size + col = idx
-            int col = idx % Size;
-            int row = (idx - col) / Size;
+            //get => Nodes[y * Width + x];
+            //set => Nodes[y * Width + x] = idx;
+            int x = idx % Width;
+            int y = (idx - x) / Width;
 
-            for (int col_i = -1; col_i < 2; col_i++)
-                for (int row_i = -1; row_i < 2; row_i++)
+            for (int ix = -1; ix < 2; ix++)
+                for (int iy = -1; iy < 2; iy++)
                 {
-                    int current_idx = CalculateIndex(row + row_i, col + col_i);
+                    int current_idx = CalculateIndex(x + ix, y + iy);
                     if (current_idx != -1 && Nodes[current_idx] == NodeType.Head)
                     {
                         heads++;
@@ -91,21 +94,21 @@ namespace Wireworld.Logic
 
         private int CalculateIndex(int x, int y)
         {
-            if (Borders && (x >= Size || y >= Size || x < 0 || y < 0))
+            if (Borders && (x >= Width || y >= Height || x < 0 || y < 0))
                 return -1;
 
             // Wrap x
-            if (x >= Size)
+            if (x >= Width)
                 x = 0;
             else if (x < 0)
-                x = Size - 1;
+                x = Width - 1;
             // Wrap y
-            if (y >= Size)
+            if (y >= Height)
                 y = 0;
             else if (y < 0)
-                y = Size - 1;
+                y = Height - 1;
 
-            return x * Size + y;
+            return y * Width + x;
         }
     }
 }

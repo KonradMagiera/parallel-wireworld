@@ -42,7 +42,6 @@ namespace Wireworld
             try
             {
                 nodes = FileHandler.ReadFile(args[0], out width, out height);
-                Console.WriteLine("<3: " + width + " " + height);
             }
             catch
             {
@@ -52,7 +51,7 @@ namespace Wireworld
 
             // Create and run Automata
 
-            Automata automata = new Automata(width)
+            Automata automata = new Automata(width, height)
             {
                 NumberOfThreads = numberOfThreads,
                 Borders = borders,
@@ -64,10 +63,11 @@ namespace Wireworld
 
             for(ulong i = 0; i < numberOfGenerations; i++)
                 automata.NextGeneration();
+                
 
             stopwatch.Stop();
             TimeSpan ts = stopwatch.Elapsed;
-
+            
             FileHandler.SaveImage(automata, args[1]);
 
             Console.WriteLine("Time: {0:00}:{1:00}:{2:00}.{3}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
