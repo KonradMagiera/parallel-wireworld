@@ -37,10 +37,12 @@ namespace Wireworld
 
             // Read png
             NodeType[] nodes;
+            int width, height;
 
             try
             {
-                nodes = FileHandler.ReadFile(args[0]);
+                nodes = FileHandler.ReadFile(args[0], out width, out height);
+                Console.WriteLine("<3: " + width + " " + height);
             }
             catch
             {
@@ -49,8 +51,8 @@ namespace Wireworld
             }
 
             // Create and run Automata
-            int size = (int)Math.Sqrt(nodes.Length);
-            Automata automata = new Automata(size)
+
+            Automata automata = new Automata(width)
             {
                 NumberOfThreads = numberOfThreads,
                 Borders = borders,
@@ -65,6 +67,8 @@ namespace Wireworld
 
             stopwatch.Stop();
             TimeSpan ts = stopwatch.Elapsed;
+
+            FileHandler.SaveImage(automata, args[1]);
 
             Console.WriteLine("Time: {0:00}:{1:00}:{2:00}.{3}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
         }

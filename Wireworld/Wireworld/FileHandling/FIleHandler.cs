@@ -6,14 +6,13 @@ namespace Wireworld.FileHandling
 {
     class FileHandler
     {
-        public static NodeType[] ReadFile(string filename)
+        public static NodeType[] ReadFile(string filename, out int width, out int height)
         {
             Bitmap generation = new Bitmap(filename);
 
-            // as we dont use GUI, maybe modify automata to different dimension values
-            if (generation.Width != generation.Height) throw new NotSupportedException();
+            width = generation.Width;
+            height = generation.Height;
 
-            Color EMPTY = Color.FromArgb(0, 0, 0);
             Color CONDUCTOR = Color.FromArgb(255, 255, 0);
             Color HEAD = Color.FromArgb(0, 0, 255);
             Color TAIL = Color.FromArgb(255, 0, 0);
@@ -25,11 +24,7 @@ namespace Wireworld.FileHandling
                 {
                     Color c = generation.GetPixel(x, y);
 
-                    if (c.Equals(EMPTY))
-                    {
-                        nodes[i] = NodeType.Empty;
-                    }
-                    else if (c.Equals(CONDUCTOR))
+                    if (c.Equals(CONDUCTOR))
                     {
                         nodes[i] = NodeType.Conductor;
                     }
@@ -41,15 +36,46 @@ namespace Wireworld.FileHandling
                     {
                         nodes[i] = NodeType.Head;
                     }
+                    else
+                    {
+                        nodes[i] = NodeType.Empty;
+                    }
                     i++;
                 }
 
             return nodes;
         }
 
-        public static void SaveGif()
+        public static void SaveImage(Automata automata, string filename)
         {
+            Bitmap generation = new Bitmap(automata.Size, automata.Size);
 
+            Color EMPTY = Color.FromArgb(0, 0, 0);
+            Color CONDUCTOR = Color.FromArgb(255, 255, 0);
+            Color HEAD = Color.FromArgb(0, 0, 255);
+            Color TAIL = Color.FromArgb(255, 0, 0);
+
+            for (int y = 0; y < automata.Size; y++)
+                for (int x = 0; x < automata.Size; x++)
+                {
+                    switch (automata[x, y])
+                    {
+                        case NodeType.Conductor:
+                            generation.SetPixel(y, x, CONDUCTOR);
+                            break;
+                        case NodeType.Head:
+                            generation.SetPixel(y, x, HEAD);
+                            break;
+                        case NodeType.Tail:
+                            generation.SetPixel(y, x, TAIL);
+                            break;
+                        default:
+                            generation.SetPixel(y, x, EMPTY);
+                            break;
+                    }
+                }
+
+            generation.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
         }
 
     }
